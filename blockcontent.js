@@ -5,6 +5,8 @@ var folderId = "278b00fc68d408e88a33ae1db83da184ba08cd93";
 var otmmAssetsURL = "https://183.82.105.188:8443/otmmapi/v4/folders/" + folderId + "/assets";
 var otmmBaseUrl = "https://183.82.105.188:8443";
 
+var selectedImagePath = "";
+
 var setContentToBuilder = function () {
     getAuthentication();
     var assetName = document.getElementById('assetName').value;
@@ -12,7 +14,11 @@ var setContentToBuilder = function () {
     // sdk.setContent('<h1>'+ assetName + '</h1>')
     console.log('content set');
     //sdk.setContent('<img src="https://www.opentext.com/file_source/OpenText/en_US/PNG/opentext-zoom-crop-screen-otmm-16-3.png"/>');
-    sdk.setContent('<img src="https://www.opentext.com/file_source/OpenText/en_US/PNG/OTMM%20-%20Facet%20Screen%20Shot%2016x9.png"/>');
+
+}
+
+var addAssetToContentBlock = function () {
+    sdk.setContent(selectedImagePath);
 }
 
 
@@ -54,28 +60,44 @@ var getAssetsFromOTMM = function (authInfo) {
                 formAssets(assetObject);
             }
         }
-
+        formAssets("button");
     }
+    // var addAssetOption = document.getElementsByClassName(".addAsset");
+    // addAssetOption.style.display = null;
 }
 
 var formAssets = function (assetObj) {
-    if (assetObj && assetObj.rendition_content && assetObj.rendition_content.preview_content && assetObj.rendition_content.preview_content.url) {
-        var assetContainer = document.getElementById('assetContainer');
-        var div = document.createElement('div');
-        var span = document.createElement('span');
-        span.id = 'checkAsset';
-        span.innerHTML = '<span><input type="checkbox" onclick="addAsset(this)"/></span>'
-        
-        div.className = 'otmmAsset';
-        div.innerHTML = '<img class = "otmmImg" src ="' + otmmBaseUrl + assetObj.rendition_content.preview_content.url + '"/>';
-        div.appendChild(span);
-        assetContainer.appendChild(div);
+    var assetContainer = document.getElementById('assetContainer');
+    if (assetObj == "button") {
+        var button = document.createElement('BUTTON');
+
+        button.innerHTML = "Add Asset";
+        button.onclick = function () {
+            addAssetToContentBlock();
+        }
+        //button.innerHTML("Add Asset");
+        assetContainer.append(button);
+    } else {
+        if (assetObj && assetObj.rendition_content && assetObj.rendition_content.preview_content && assetObj.rendition_content.preview_content.url) {
+
+            var div = document.createElement('div');
+            var span = document.createElement('span');
+            span.id = 'checkAsset';
+            span.innerHTML = '<span><input type="checkbox" onclick="addAsset(this)"/></span>'
+
+            div.className = 'otmmAsset';
+            div.innerHTML = '<img class = "otmmImg" src ="' + otmmBaseUrl + assetObj.rendition_content.preview_content.url + '"/>';
+            div.appendChild(span);
+            assetContainer.appendChild(div);
+        }
     }
-
-
 }
 
 var addAsset = function (assetObj) {
-
+    console.log("Asset obj is ", assetObj);
+    var selectedAsset = assetObj.closest(".otmmImg");
+    console.log("Image is " + selectedAsset);
+    var imgPath = selectedAsset.previousElementSibling.getAttribute('src');
+    selectedImagePath = img;
 }
 
